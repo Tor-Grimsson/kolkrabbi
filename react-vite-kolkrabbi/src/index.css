@@ -25,20 +25,7 @@
   src: url("/fonts/circularweb-book.woff2") format("woff2");
 }
 
-@font-face {
-  font-family: "robert-medium";
-  src: url("/fonts/robert-medium.woff2") format("woff2");
-}
 
-@font-face {
-  font-family: "robert-regular";
-  src: url("/fonts/robert-regular.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "zentry-regular";
-  src: url("/fonts/zentry-regular.woff2") format("woff2");
-}
 
 
 @theme {

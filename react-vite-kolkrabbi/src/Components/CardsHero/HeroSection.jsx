@@ -145,13 +145,15 @@ const Hero = () => {
 
       <div
       id="video-frame"
-      className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
+      className="relative z-100 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
          <div>
             <div
                className="mask-clip-path absoluteCenter absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg"
                onMouseEnter={() => setIsHovering(true)}
                onMouseLeave={() => setIsHovering(false)}
+               onTouchStart={() => setIsHovering(true)}
+               onTouchEnd={() => setIsHovering(false)}
             >
                <VideoPreview>
                   <div
