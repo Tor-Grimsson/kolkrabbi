@@ -16,20 +16,33 @@ const Hero = () => {
    const [loadedVideos, setLoadedVideos] = useState(0);
 
    const [isHovering, setIsHovering] = useState(false);
+   const [isMobile, setIsMobile] = useState(false);
 
    const totalVideos = 4;
    const miniVdRef = useRef(null);
    const miniVdContainerRef = useRef(null);
+
+   useEffect(() => {
+      const checkMobile = () => {
+         setIsMobile(window.innerWidth < 768);
+      };
+
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+   }, []);
 
    const handleVideoLoad = () => {
       setLoadedVideos((prev) => prev + 1);
    }
 
    useEffect(() => {
-      if (loadedVideos >= 3) {
+      // For mobile: only wait for 1 video, for desktop: wait for 3
+      const requiredVideos = isMobile ? 1 : 3;
+      if (loadedVideos >= requiredVideos) {
          setIsLoading(false);
       }
-   }, [loadedVideos]);
+   }, [loadedVideos, isMobile]);
 
    const handleMiniVdClick = () => {
       gsap.to(miniVdContainerRef.current, {
@@ -74,13 +87,15 @@ const Hero = () => {
    };
    
    useGSAP(() => {
-      gsap.set("#next-video", { visibility: "hidden" });
-      gsap.set(miniVdContainerRef.current, { scale: 0.5, opacity: 0 });
-   }, { dependencies: [currentIndex] });
+      if (!isMobile) {
+         gsap.set("#next-video", { visibility: "hidden" });
+         gsap.set(miniVdContainerRef.current, { scale: 0.5, opacity: 0 });
+      }
+   }, { dependencies: [currentIndex, isMobile] });
 
-   // CORRECTED: This hook now controls playback for the mini-video
+   // CORRECTED: This hook now controls playback for the mini-video (desktop only)
    useGSAP(() => {
-      if (isHovering) {
+      if (!isMobile && isHovering) {
          // Play the video when the preview appears
          miniVdRef.current?.play();
          gsap.to(miniVdContainerRef.current, {
@@ -89,7 +104,7 @@ const Hero = () => {
             duration: 0.5,
             ease: 'power2.inOut'
          });
-      } else {
+      } else if (!isMobile && !isHovering) {
          // Pause the video when the preview disappears
          miniVdRef.current?.pause();
          gsap.to(miniVdContainerRef.current, {
@@ -99,25 +114,28 @@ const Hero = () => {
             ease: 'power2.inOut'
          });
       }
-   }, [isHovering]);
+   }, [isHovering, isMobile]);
 
    useGSAP(() => {
-    gsap.set("#video-frame", {
-      clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
-      borderRadius: "0% 0% 40% 10%",
-    });
-    gsap.from("#video-frame", {
-      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-      borderRadius: "0% 0% 0% 0%",
-      ease: "power1.inOut",
-      scrollTrigger: {
-        trigger: "#video-frame",
-        start: "center center",
-        end: "bottom center",
-        scrub: true,
-      },
-    });
-   });
+    // Disable complex animations on mobile
+    if (!isMobile) {
+      gsap.set("#video-frame", {
+        clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
+        borderRadius: "0% 0% 40% 10%",
+      });
+      gsap.from("#video-frame", {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+        borderRadius: "0% 0% 0% 0%",
+        ease: "power1.inOut",
+        scrollTrigger: {
+          trigger: "#video-frame",
+          start: "center center",
+          end: "bottom center",
+          scrub: true,
+        },
+      });
+    }
+   }, [isMobile]);
 
    const getVideoSrc = (index) => `videos/video-${index}.mp4`;
 
@@ -134,59 +152,79 @@ const Hero = () => {
          </div>
       )}
 
-      <div 
-      id="video-frame" 
+      <div
+      id="video-frame"
       className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
          <div>
-            <div 
-               className="mask-clip-path absoluteCenter absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg"
-               onMouseEnter={() => setIsHovering(true)} 
-               onMouseLeave={() => setIsHovering(false)}
-            >
-               <VideoPreview>
-                  <div 
-                     ref={miniVdContainerRef}
-                     onClick={handleMiniVdClick} 
-                     className="origin-center scale-50 opacity-0"
+            {/* Desktop: Show interactive elements */}
+            {!isMobile && (
+               <>
+                  <div
+                     className="mask-clip-path absoluteCenter absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg"
+                     onMouseEnter={() => setIsHovering(true)}
+                     onMouseLeave={() => setIsHovering(false)}
                   >
-                     <video 
-                        ref={miniVdRef}
-                        src={getVideoSrc((currentIndex % totalVideos) + 1)}
-                        loop
-                        muted
-                        playsInline
-                        preload="auto"
-                        id="mini-video"
-                        className="size-64 origin-center scale-150 object-cover object-center"
-                        onLoadedData={handleVideoLoad}
-                     />
+                     <VideoPreview>
+                        <div
+                           ref={miniVdContainerRef}
+                           onClick={handleMiniVdClick}
+                           className="origin-center scale-50 opacity-0"
+                        >
+                           <video
+                              ref={miniVdRef}
+                              src={getVideoSrc((currentIndex % totalVideos) + 1)}
+                              loop
+                              muted
+                              playsInline
+                              preload="auto"
+                              id="mini-video"
+                              className="size-64 origin-center scale-150 object-cover object-center"
+                              onLoadedData={handleVideoLoad}
+                           />
+                        </div>
+                     </VideoPreview>
                   </div>
-               </VideoPreview>
-            </div>
 
-            <video 
-               src={getVideoSrc((currentIndex % totalVideos) + 1)}
-               loop
-               muted
-               playsInline
-               preload="auto"
-               id="next-video"
-               className="absoluteCenter invisible absolute z-20 size-64 object-cover object-center"
-               onLoadedData={handleVideoLoad}
-            />
+                  <video
+                     src={getVideoSrc((currentIndex % totalVideos) + 1)}
+                     loop
+                     muted
+                     playsInline
+                     preload="auto"
+                     id="next-video"
+                     className="absoluteCenter invisible absolute z-20 size-64 object-cover object-center"
+                     onLoadedData={handleVideoLoad}
+                  />
 
-            <video 
-               src={getVideoSrc(currentIndex)}
-               autoPlay
-               loop
-               muted
-               playsInline
-               preload="auto"
-               id="main-video"
-               className="absoluteCenter absolute z-10 size-full object-cover object-center"
-               onLoadedData={handleVideoLoad}
-            />
+                  <video
+                     src={getVideoSrc(currentIndex)}
+                     autoPlay
+                     loop
+                     muted
+                     playsInline
+                     preload="auto"
+                     id="main-video"
+                     className="absoluteCenter absolute z-10 size-full object-cover object-center"
+                     onLoadedData={handleVideoLoad}
+                  />
+               </>
+            )}
+
+            {/* Mobile: Simple single video */}
+            {isMobile && (
+               <video
+                  src={getVideoSrc(1)}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  id="mobile-video"
+                  className="absoluteCenter absolute z-10 size-full object-cover object-center"
+                  onLoadedData={handleVideoLoad}
+               />
+            )}
          </div>
 
          <h1 className="heroHeading absolute bottom-5 right-5 z-40 text-blue-100">
