@@ -2,22 +2,42 @@
 
 @font-face {
   font-family: "right-grotesk-medium";
-  src: url("/fonts/PPRightGrotesk-NarrowMedium.woff") format("woff2");
+  src: url("/fonts/PPRightGrotesk-NarrowMedium.woff") format("woff");
 }
 
 @font-face {
   font-family: "right-grotesk-tall";
-  src: url("/fonts/PPRightGrotesk-TallBlack.woff") format("woff2");
+  src: url("/fonts/PPRightGrotesk-TallBlack.woff") format("woff");
 }
 
 @font-face {
   font-family: "right-grotesk-tight";
-  src: url("/fonts/PPRightGrotesk-TightMedium.woff") format("woff2");
+  src: url("/fonts/PPRightGrotesk-TightMedium.woff") format("woff");
 }
 
 @font-face {
   font-family: "general";
   src: url("/fonts/general.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "circular-book";
+  src: url("/fonts/circularweb-book.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "robert-medium";
+  src: url("/fonts/robert-medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "robert-regular";
+  src: url("/fonts/robert-regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "zentry-regular";
+  src: url("/fonts/zentry-regular.woff2") format("woff2");
 }
 
 
@@ -97,7 +117,7 @@ body {
 
 @utility storyOverlay {
   @apply absolute inset-0 w-full h-full bg-black;
-  mask-image: url(/svg/mask.svg);
+  mask-image: url(/Svg/mask.svg);
   mask-repeat: no-repeat;
 
   /* You can adjust the size of the "hole" here */

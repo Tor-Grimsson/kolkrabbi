@@ -1,0 +1,192 @@
+/* --- Global Variables --- */
+:root {
+  --system-ui: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --white: rgb(255, 255, 255);
+  --black: rgb(0, 0, 0);
+  --font-size: 0.7rem;
+  --metrics-color: rgba(0, 0, 0, 0.4);
+  --metrics-text-color: var(--black);
+}
+
+/* --- Body & Main Layout --- */
+body {
+  font-family: var(--system-ui);
+  font-size: var(--font-size);
+  margin: 0;
+  height: 100vh;
+  background: var(--white);
+  overflow: hidden;
+}
+
+.display-container {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Core Viewer Elements --- */
+.glyph-buffer {
+  color: var(--black);
+  font-size: 600px;
+  text-align: center;
+  position: relative;
+}
+
+#font-metrics-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* --- UI Panels (Unified Style) --- */
+#font-info, #glyph-info {
+  position: fixed;
+  z-index: 50;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
+  color: var(--black);
+  /* border: 1px solid rgba(0, 0, 0, 0.1); */
+}
+
+#font-info {
+  width: 300px;
+}
+
+#glyph-info {
+  width: 150px;
+  top: 8px;
+  right: 8px;
+}
+
+#controls {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  padding: 14px;
+  z-index: 20;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+#controls:hover {
+  opacity: 1;
+}
+
+.monospaced {
+  font-family: var(--system-mono);
+}
+
+/* --- Metric Lines and Legends --- */
+#font-metrics-overlay .metric-line,
+#font-metrics-overlay .side-bearing-line {
+  position: absolute;
+  background: var(--metrics-color);
+}
+
+#font-metrics-overlay .metric-line {
+  width: 100%;
+  height: 1px;
+}
+
+#font-metrics-overlay .side-bearing-line {
+  width: 1px;
+  height: 100%;
+  top: 0;
+}
+
+#font-metrics-overlay .legend {
+  position: absolute;
+  padding-left: 14px;
+  color: var(--metrics-text-color);
+}
+
+/* --- Buttons --- */
+#controls button {
+  font-size: var(--font-size);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 23px;
+  padding: 0 8px;
+  margin-right: 5px;
+  margin-bottom: 7px;
+  background: transparent;
+  color: var(--black);
+  border: 1px solid var(--black);
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+#controls button.active {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+/* --- Sliders (Unified Rules for All) --- */
+#controls .slider-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+
+#controls .slider-group label {
+  color: var(--black);
+  min-width: 120px;
+}
+
+#controls .slider-group span {
+  color: var(--black);
+  min-width: 60px;
+  text-align: right;
+}
+
+#controls input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  width: 100%;
+  height: 15px;
+  background: transparent;
+  outline: none;
+}
+
+#controls input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 1px;
+  cursor: pointer;
+  background: var(--black);
+}
+
+#controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: var(--black);
+  cursor: pointer;
+  margin-top: -7px;
+}
+
+#controls input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 1px;
+  cursor: pointer;
+  background: var(--black);
+}
+
+#controls input[type="range"]::-moz-range-thumb {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: var(--black);
+  cursor: pointer;
+  border: none;
+}

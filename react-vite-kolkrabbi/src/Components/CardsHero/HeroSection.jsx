@@ -16,33 +16,29 @@ const Hero = () => {
    const [loadedVideos, setLoadedVideos] = useState(0);
 
    const [isHovering, setIsHovering] = useState(false);
-   const [isMobile, setIsMobile] = useState(false);
 
    const totalVideos = 4;
    const miniVdRef = useRef(null);
    const miniVdContainerRef = useRef(null);
-
-   useEffect(() => {
-      const checkMobile = () => {
-         setIsMobile(window.innerWidth < 768);
-      };
-
-      checkMobile();
-      window.addEventListener('resize', checkMobile);
-      return () => window.removeEventListener('resize', checkMobile);
-   }, []);
 
    const handleVideoLoad = () => {
       setLoadedVideos((prev) => prev + 1);
    }
 
    useEffect(() => {
-      // For mobile: only wait for 1 video, for desktop: wait for 3
-      const requiredVideos = isMobile ? 1 : 3;
-      if (loadedVideos >= requiredVideos) {
+      if (loadedVideos >= 3) {
          setIsLoading(false);
       }
-   }, [loadedVideos, isMobile]);
+   }, [loadedVideos]);
+
+   // Timeout fallback to ensure loading screen doesn't stick
+   useEffect(() => {
+      const timeout = setTimeout(() => {
+         setIsLoading(false);
+      }, 5000); // Force loading to complete after 5 seconds
+
+      return () => clearTimeout(timeout);
+   }, []);
 
    const handleMiniVdClick = () => {
       gsap.to(miniVdContainerRef.current, {
@@ -50,19 +46,19 @@ const Hero = () => {
          duration: 0.5,
          ease: 'power2.inOut',
       });
-      
+
       const nextVideoElement = document.getElementById('next-video');
       const miniVideoElement = miniVdRef.current;
 
       if (nextVideoElement && miniVideoElement) {
-         
+
          const onSeeked = () => {
             gsap.set(nextVideoElement, { visibility: "visible" });
-            gsap.fromTo(nextVideoElement, 
-               { 
+            gsap.fromTo(nextVideoElement,
+               {
                   width: "16rem",
                   height: "16rem",
-               }, 
+               },
                {
                   width: "100%",
                   height: "100%",
@@ -77,25 +73,23 @@ const Hero = () => {
                }
             );
          };
-         
+
          nextVideoElement.addEventListener('seeked', onSeeked, { once: true });
-         
+
          const LATENCY_COMPENSATION = 0;
          const currentTime = miniVideoElement.currentTime;
          nextVideoElement.currentTime = currentTime + LATENCY_COMPENSATION;
       }
    };
-   
-   useGSAP(() => {
-      if (!isMobile) {
-         gsap.set("#next-video", { visibility: "hidden" });
-         gsap.set(miniVdContainerRef.current, { scale: 0.5, opacity: 0 });
-      }
-   }, { dependencies: [currentIndex, isMobile] });
 
-   // CORRECTED: This hook now controls playback for the mini-video (desktop only)
    useGSAP(() => {
-      if (!isMobile && isHovering) {
+      gsap.set("#next-video", { visibility: "hidden" });
+      gsap.set(miniVdContainerRef.current, { scale: 0.5, opacity: 0 });
+   }, { dependencies: [currentIndex] });
+
+   // CORRECTED: This hook now controls playback for the mini-video
+   useGSAP(() => {
+      if (isHovering) {
          // Play the video when the preview appears
          miniVdRef.current?.play();
          gsap.to(miniVdContainerRef.current, {
@@ -104,7 +98,7 @@ const Hero = () => {
             duration: 0.5,
             ease: 'power2.inOut'
          });
-      } else if (!isMobile && !isHovering) {
+      } else {
          // Pause the video when the preview disappears
          miniVdRef.current?.pause();
          gsap.to(miniVdContainerRef.current, {
@@ -114,28 +108,25 @@ const Hero = () => {
             ease: 'power2.inOut'
          });
       }
-   }, [isHovering, isMobile]);
+   }, [isHovering]);
 
    useGSAP(() => {
-    // Disable complex animations on mobile
-    if (!isMobile) {
-      gsap.set("#video-frame", {
-        clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
-        borderRadius: "0% 0% 40% 10%",
-      });
-      gsap.from("#video-frame", {
-        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-        borderRadius: "0% 0% 0% 0%",
-        ease: "power1.inOut",
-        scrollTrigger: {
-          trigger: "#video-frame",
-          start: "center center",
-          end: "bottom center",
-          scrub: true,
-        },
-      });
-    }
-   }, [isMobile]);
+    gsap.set("#video-frame", {
+      clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
+      borderRadius: "0% 0% 40% 10%",
+    });
+    gsap.from("#video-frame", {
+      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+      borderRadius: "0% 0% 0% 0%",
+      ease: "power1.inOut",
+      scrollTrigger: {
+        trigger: "#video-frame",
+        start: "center center",
+        end: "bottom center",
+        scrub: true,
+      },
+    });
+   });
 
    const getVideoSrc = (index) => `videos/video-${index}.mp4`;
 
@@ -157,74 +148,54 @@ const Hero = () => {
       className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-black"
       >
          <div>
-            {/* Desktop: Show interactive elements */}
-            {!isMobile && (
-               <>
+            <div
+               className="mask-clip-path absoluteCenter absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg"
+               onMouseEnter={() => setIsHovering(true)}
+               onMouseLeave={() => setIsHovering(false)}
+            >
+               <VideoPreview>
                   <div
-                     className="mask-clip-path absoluteCenter absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg"
-                     onMouseEnter={() => setIsHovering(true)}
-                     onMouseLeave={() => setIsHovering(false)}
+                     ref={miniVdContainerRef}
+                     onClick={handleMiniVdClick}
+                     className="origin-center scale-50 opacity-0"
                   >
-                     <VideoPreview>
-                        <div
-                           ref={miniVdContainerRef}
-                           onClick={handleMiniVdClick}
-                           className="origin-center scale-50 opacity-0"
-                        >
-                           <video
-                              ref={miniVdRef}
-                              src={getVideoSrc((currentIndex % totalVideos) + 1)}
-                              loop
-                              muted
-                              playsInline
-                              preload="auto"
-                              id="mini-video"
-                              className="size-64 origin-center scale-150 object-cover object-center"
-                              onLoadedData={handleVideoLoad}
-                           />
-                        </div>
-                     </VideoPreview>
+                     <video
+                        ref={miniVdRef}
+                        src={getVideoSrc((currentIndex % totalVideos) + 1)}
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                        id="mini-video"
+                        className="size-64 origin-center scale-150 object-cover object-center"
+                        onLoadedData={handleVideoLoad}
+                     />
                   </div>
+               </VideoPreview>
+            </div>
 
-                  <video
-                     src={getVideoSrc((currentIndex % totalVideos) + 1)}
-                     loop
-                     muted
-                     playsInline
-                     preload="auto"
-                     id="next-video"
-                     className="absoluteCenter invisible absolute z-20 size-64 object-cover object-center"
-                     onLoadedData={handleVideoLoad}
-                  />
+            <video
+               src={getVideoSrc((currentIndex % totalVideos) + 1)}
+               loop
+               muted
+               playsInline
+               preload="auto"
+               id="next-video"
+               className="absoluteCenter invisible absolute z-20 size-64 object-cover object-center"
+               onLoadedData={handleVideoLoad}
+            />
 
-                  <video
-                     src={getVideoSrc(currentIndex)}
-                     autoPlay
-                     loop
-                     muted
-                     playsInline
-                     preload="auto"
-                     id="main-video"
-                     className="absoluteCenter absolute z-10 size-full object-cover object-center"
-                     onLoadedData={handleVideoLoad}
-                  />
-               </>
-            )}
-
-            {/* Mobile: Simple single video */}
-            {isMobile && (
-               <video
-                  src={getVideoSrc(1)}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  id="mobile-video"
-                  className="absoluteCenter absolute z-10 size-full object-cover object-center"
-                  onLoadedData={handleVideoLoad}
-               />
-            )}
+            <video
+               src={getVideoSrc(currentIndex)}
+               autoPlay
+               loop
+               muted
+               playsInline
+               preload="auto"
+               id="main-video"
+               className="absoluteCenter absolute z-10 size-full object-cover object-center"
+               onLoadedData={handleVideoLoad}
+            />
          </div>
 
          <h1 className="heroHeading absolute bottom-5 right-5 z-40 text-blue-100">
@@ -236,9 +207,9 @@ const Hero = () => {
                <h1 className="heroHeading text-blue-100">Kolkrabbi</h1>
                <p className="mb-5 max-w-64 text-2xl font-right-grotesk-medium text-blue-100">Design Studio & Atelier<br />Based in Reykjavík, Iceland</p>
 
-               <Button id="get-in-touch" 
-               title="Get in Touch" 
-               leftIcon={<TiLocationArrow />} 
+               <Button id="get-in-touch"
+               title="Get in Touch"
+               leftIcon={<TiLocationArrow />}
                containerClass="!bg-yellow-400 flexCenter gap-1" />
             </div>
          </div>
