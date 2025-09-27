@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "right-grotesk-medium";
+  src: url("/fonts/PPRightGrotesk-NarrowMedium.woff") format("woff2");
+}
+
+@font-face {
+  font-family: "right-grotesk-tall";
+  src: url("/fonts/PPRightGrotesk-TallBlack.woff") format("woff2");
+}
+
+@font-face {
+  font-family: "right-grotesk-tight";
+  src: url("/fonts/PPRightGrotesk-TightMedium.woff") format("woff2");
+}
+
+@font-face {
+  font-family: "general";
+  src: url("/fonts/general.woff2") format("woff2");
+}
+
+
+@theme {
+  --font-general: "general", sans-serif;
+
+  --font-right-grotesk-medium: "right-grotesk-medium", sans-serif;
+  --font-right-grotesk-tall: "right-grotesk-tall", sans-serif;
+  --font-right-grotesk-tight: "right-grotesk-tight", sans-serif;
+
+  --color-blue-50: #fafafa;
+  --color-blue-100: #dfdff2;
+  --color-blue-200: #f0f2fa;
+  --color-blue-300: #010101;
+  --color-blue-400: #4fb7dd;
+
+  --color-violet-300: #5724ff;
+
+  --color-yellow-100: #8e983f;
+  --color-yellow-300: #edff66;
+}
+
+body {
+  width: 100dvw;
+  background-color: #dfdff0;
+  overflow-x: hidden;
+}
+
+/* Essential utility classes */
+@utility navHoverBtn {
+  @apply relative ms-10 font-general text-xs uppercase text-blue-50 after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-neutral-800 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 dark:after:bg-white cursor-pointer;
+}
+
+@utility floatingNav {
+  @apply bg-black rounded-none md:rounded-lg border;
+}
+
+@utility absoluteCenter {
+  @apply absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%];
+}
+
+@utility flexCenter {
+  @apply flex justify-center items-center;
+}
+
+@utility heroHeading {
+  @apply uppercase font-right-grotesk-tight font-black text-5xl sm:right-10 sm:text-7xl md:text-9xl lg:text-[12rem] tracking-[0.1rem];
+}
+
+@utility aboutSubtext {
+  @apply absolute bottom-[-80dvh] left-1/2 w-full max-w-96 -translate-x-1/2 text-center font-right-grotesk-medium text-lg md:max-w-[34rem];
+}
+
+@utility aboutImage {
+  @apply absolute left-1/2 top-0 z-20 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw];
+}
+
+@utility animatedTitle {
+  @apply flex flex-col gap-1 text-7xl uppercase leading-[.8] text-white sm:px-32 md:text-[6rem];
+}
+
+@utility bentoTitle {
+  @apply uppercase md:text-6xl text-4xl font-black font-right-grotesk-tight;
+}
+
+@utility bentoItem {
+  @apply relative overflow-hidden rounded-md transition-transform duration-300 ease-out;
+}
+
+@utility storyImgContainer {
+  @apply relative w-full max-w-2xl mx-auto -mt-40 md:-mt-24 md:me-200;
+}
+
+@utility storyImgContent {
+  @apply w-full;
+}
+
+@utility storyOverlay {
+  @apply absolute inset-0 w-full h-full bg-black;
+  mask-image: url(/svg/mask.svg);
+  mask-repeat: no-repeat;
+
+  /* You can adjust the size of the "hole" here */
+  mask-size: 500px 625px;
+
+  /* The position is centered on the cursor */
+  mask-position: var(--x) var(--y);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor; /* Safari equivalent */
+}
+
+.mask-clip-path {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
