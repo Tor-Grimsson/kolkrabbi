@@ -1,0 +1,17 @@
+{
+  "name": "@kolkrabbi/fontviewer",
+  "version": "1.0.0",
+  "description": "Independent FontViewer module for variable font display and interaction",
+  "main": "src/index.js",
+  "type": "module",
+  "dependencies": {},
+  "keywords": [
+    "font",
+    "typography",
+    "variable-fonts",
+    "opentype",
+    "foundry"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

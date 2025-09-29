@@ -1,21 +1,23 @@
 {
-  "name": "p-12-kolkrabbi",
+  "name": "kolkrabbi",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "description": "Kolkrabbi monorepo - portfolio and foundry website",
   "workspaces": [
-    "react-vite-kolkrabbi",
-    "studio-work-cms",
-    "fontviewer"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
-    "dev:react": "npm run dev --workspace=react-vite-kolkrabbi",
-    "dev:cms": "npm run dev --workspace=studio-work-cms",
-    "build:react": "npm run build --workspace=react-vite-kolkrabbi",
-    "build:cms": "npm run build --workspace=studio-work-cms",
-    "lint:react": "npm run lint --workspace=react-vite-kolkrabbi",
-    "lint:cms": "npm run lint --workspace=studio-work-cms",
-    "install:all": "npm install"
+    "dev": "npm run dev:web",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:studio": "npm run dev --workspace=apps/studio",
+    "dev:fontviewer": "npm run dev --workspace=packages/fontviewer",
+    "build": "npm run build:web",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:studio": "npm run build --workspace=apps/studio",
+    "lint:web": "npm run lint --workspace=apps/web",
+    "lint:studio": "npm run lint --workspace=apps/studio"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
