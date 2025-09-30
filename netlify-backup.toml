@@ -1,6 +1,7 @@
 [build]
-  command = "cd apps/web && npx vite build"
+  command = "npm install --force && npm run build:web"
   publish = "apps/web/dist"
+  ignore = "/node_modules/"
 
 [build.environment]
   NPM_VERSION = "10.9.0"
