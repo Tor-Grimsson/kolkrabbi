@@ -1,8 +1,7 @@
 [build]
-  command = "npm ci && npm run build:web"
+  command = "npm run build:web"
   publish = "apps/web/dist"
 
 [build.environment]
   NPM_VERSION = "10.9.0"
   NODE_VERSION = "20.18.0"
-  NODE_ENV = "production"
