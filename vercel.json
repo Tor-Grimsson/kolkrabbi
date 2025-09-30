@@ -1,4 +1,6 @@
 {
-  "buildCommand": "npm run build:web",
-  "outputDirectory": "apps/web/dist"
+  "buildCommand": "npm ci && npm run build:web",
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "npm install",
+  "nodeVersion": "20.x"
 }
